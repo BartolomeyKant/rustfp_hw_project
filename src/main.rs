@@ -1,22 +1,37 @@
-use std::vec::Vec;
-
-fn main() {
-    const COUNT: usize = 100;
-    let mut result = Vec::with_capacity(COUNT);
-    for i in 1..=COUNT {
-        let s = match (i % 3, i % 5) {
-            (0, 0) => String::from("FizzBuzz"),
-            (0, _) => String::from("Fizz"),
-            (_, 0) => String::from("Buzz"),
-            (_, _) => format!("{}", i),
-        };
-        result.push(s);
-    }
-    print_result(&result);
+pub struct Plug {
+    _id: String,
+    _description: String,
+    _is_on: bool,
+    _current_pover: f32,
 }
 
-fn print_result(result: &Vec<String>) {
-    for r in result {
-        println!("{}", r)
+impl Plug {
+    pub fn description(&self) -> String {
+        todo!()
+    }
+
+    pub fn get_power(&self) -> f32 {
+        todo!()
+    }
+
+    pub fn turn_off(&mut self) {
+        todo!();
+    }
+
+    pub fn turn_on(&mut self) {
+        todo!();
     }
 }
+
+pub struct Thermometr {
+    _id: String,
+    _value: f32,
+}
+
+impl Thermometr {
+    pub fn value(&self) -> f32 {
+        todo!()
+    }
+}
+
+fn main() {}
