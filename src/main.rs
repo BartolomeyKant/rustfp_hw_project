@@ -165,7 +165,7 @@ fn main() {
         house.add_room(format!("{i}_room").as_str(), room);
     }
 
-    house.add_room("12nd room", SmartRoomImpl::new());
+    house.add_room("12th room", SmartRoomImpl::new());
 
     let room_socket_report = {
         match house.rooms().get("1_room") {
