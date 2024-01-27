@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::ffi::c_void;
 
 pub trait SmartDevice {
     fn state_report(&self) -> String;
@@ -124,7 +125,25 @@ impl SmartHouse for SmartHouseImp {
     }
 }
 
-pub fn make_report(
+pub fn house_revision_report(house: &dyn SmartHouse) -> Result<String, String> {
+    Ok(format!("House name: {} {}", house.name(), {
+        let mut rooms_report = String::new();
+        for (room_name, room) in house.rooms() {
+            let room_rep = format!("\n\troom: {} devices: {}", room_name, {
+                let mut devices_list = String::new();
+                for dev_name in room.devices().keys() {
+                    let add_device = format!("{},", &dev_name);
+                    devices_list = devices_list + &add_device;
+                }
+                devices_list
+            });
+            rooms_report = rooms_report + &room_rep;
+        }
+        rooms_report
+    }))
+}
+
+pub fn make_device_report(
     house: &dyn SmartHouse,
     report_device: &dyn SmartDevice,
 ) -> Result<String, &'static str> {
@@ -167,11 +186,15 @@ fn main() {
 
     house.add_room("12th room", SmartRoomImpl::new());
 
+    let house_revision = house_revision_report(&house).expect("Something went wrong");
+
+    println!("House revision: {house_revision}");
+
     let room_socket_report = {
         match house.rooms().get("1_room") {
             Some(room) => match room.devices().get("lamp socket") {
                 Some(device) => {
-                    make_report(&house, &**device).expect("failed to get device report")
+                    make_device_report(&house, &**device).expect("failed to get device report")
                 }
                 _ => panic!("device not found"),
             },
