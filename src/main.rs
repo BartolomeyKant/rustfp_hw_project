@@ -1,10 +1,10 @@
 use homeworks_project::smart_house::devices::Socket;
 use homeworks_project::smart_house::devices::Thermometr;
 use homeworks_project::smart_house::house::SmartHouseImp;
-use homeworks_project::smart_house::interface::*;
 use homeworks_project::smart_house::reports::house_revision_report;
 use homeworks_project::smart_house::reports::make_device_report;
 use homeworks_project::smart_house::rooms::SmartRoomImpl;
+use homeworks_project::smart_house::SmartHouse;
 
 fn main() {
     let mut house = SmartHouseImp::new("my_house");
