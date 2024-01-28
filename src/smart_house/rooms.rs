@@ -16,6 +16,12 @@ impl SmartRoomImpl {
     }
 }
 
+impl Default for SmartRoomImpl {
+    fn default() -> SmartRoomImpl {
+        SmartRoomImpl::new()
+    }
+}
+
 impl SmartRoom for SmartRoomImpl {
     fn devices(&self) -> &HashMap<String, Box<dyn SmartDevice>> {
         &self.devices
