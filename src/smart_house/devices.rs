@@ -61,6 +61,16 @@ impl Socket {
         Ok(())
     }
 
+    pub fn is_on(&self) -> Result<bool, DeviceError> {
+        match self.check_device() {
+            Err(e) => match e {
+                DeviceError::DeviceOffline => Ok(false),
+                _ => Err(e),
+            },
+            _ => Ok(self.is_on),
+        }
+    }
+
     fn check_device(&self) -> Result<(), DeviceError> {
         if !self.is_accessable {
             return Err(DeviceError::AccessDenied);
@@ -81,10 +91,14 @@ impl SmartDevice for Socket {
                 Ok(power) => format!("{power}"),
                 Err(err) => format!("{err}"),
             },
-            if self.is_on {
-                "is on now"
-            } else {
-                "is off now"
+            match self.is_on() {
+                Ok(on) =>
+                    if on {
+                        "is on now".to_string()
+                    } else {
+                        "is off now".to_string()
+                    },
+                Err(err) => format!("{err}"),
             }
         )
     }
@@ -145,11 +159,11 @@ mod tests {
 
         assert_eq!(socket.description(), "socket 1".to_string());
         assert_eq!(socket.get_power().unwrap(), 12f32);
-        assert!(!socket.is_on);
+        assert!(!socket.is_on().unwrap());
         let _ = socket.turn_on();
-        assert!(socket.is_on);
+        assert!(socket.is_on().unwrap());
         let _ = socket.turn_off();
-        assert!(!socket.is_on);
+        assert!(!socket.is_on().unwrap());
     }
 
     #[test]
