@@ -16,6 +16,8 @@ fn main() {
                 description: format!("Socket in {i} room"),
                 is_on: true,
                 current_pover: 12.0,
+                is_accessable: true,
+                is_online: false,
             },
         );
         room.add_device(
@@ -23,6 +25,7 @@ fn main() {
             Thermometr {
                 description: format!("Thermometr in {i} room"),
                 value: 34.0,
+                is_online: true,
             },
         );
         house.add_room(format!("{i}_room").as_str(), room);
