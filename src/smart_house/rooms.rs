@@ -1,29 +1,34 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use super::*;
 
-pub struct SmartRoomImpl {
-    devices: HashMap<String, Box<dyn SmartDevice>>,
+pub struct SmartRoomImpl<TDevices: DeviceStorage> {
+    name: String,
+    devices: Rc<RefCell<TDevices>>,
 }
 
-impl SmartRoomImpl {
-    pub fn new() -> SmartRoomImpl {
+impl<T: DeviceStorage> SmartRoomImpl<T> {
+    pub fn new(name: &str, devices: Rc<RefCell<T>>) -> Self {
         SmartRoomImpl {
-            devices: Default::default(),
+            name: name.to_string(),
+            devices,
         }
     }
+}
 
-    pub fn add_device<T: SmartDevice + 'static>(&mut self, name: &str, device: T) {
-        self.devices.insert(name.to_string(), Box::new(device));
+impl<T: DeviceStorage> Nameable for SmartRoomImpl<T> {
+    fn name(&self) -> String {
+        self.name.clone()
     }
 }
 
-impl Default for SmartRoomImpl {
-    fn default() -> SmartRoomImpl {
-        SmartRoomImpl::new()
-    }
-}
-
-impl SmartRoom for SmartRoomImpl {
-    fn devices(&self) -> &HashMap<String, Box<dyn SmartDevice>> {
-        &self.devices
+impl<T: DeviceStorage> SmartRoom for SmartRoomImpl<T> {
+    fn devices(&self) -> Vec<String> {
+        let r = (*self.devices).borrow();
+        r.devices_in_room(&self.name)
+            .iter()
+            .map(|d| d.name())
+            .collect()
     }
 }
