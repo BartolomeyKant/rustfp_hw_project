@@ -63,6 +63,10 @@ impl DeviceStorageImpl {
         );
     }
 
+    pub fn remove_deivices(&mut self, query: &DevicePositionQuery) {
+        self.devices.retain(|k, _| query != k);
+    }
+
     pub fn query_devices(&self, query: &DevicePositionQuery) -> Vec<&DeviceType> {
         self.devices
             .iter()
@@ -84,5 +88,97 @@ impl DeviceStorage for DeviceStorageImpl {
             .iter()
             .map(|d| d.deref_to_smart_device())
             .collect()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::smart_house::interface::Nameable;
+
+    #[test]
+    fn add_device() {
+        let mut storage = DeviceStorageImpl::new();
+        storage.add_device(
+            "0",
+            "1",
+            "socket",
+            DeviceType::Socket(Socket {
+                name: "socket".to_string(),
+                description: "socket".to_string(),
+                is_on: false,
+                current_pover: 12_f32,
+                is_online: true,
+                is_accessable: true,
+            }),
+        );
+        storage.add_device(
+            "0",
+            "1",
+            "socket2",
+            DeviceType::Socket(Socket {
+                name: "socket2".to_string(),
+                description: "socket2".to_string(),
+                is_on: false,
+                current_pover: 12_f32,
+                is_online: true,
+                is_accessable: true,
+            }),
+        );
+
+        // query device
+        let dev = storage.query_devices(&DevicePositionQuery {
+            house: "0".to_string(),
+            room: "1".to_string(),
+            name: "socket".to_string(),
+        });
+        assert_eq!(dev.len(), 1);
+
+        match dev.first().unwrap()
+        {
+            DeviceType::Socket(s)=> assert_eq!(s.name(), "socket"),
+            _ => panic!("wrong device"),
+        }
+
+        // device not exists
+        let dev = storage.query_devices(&DevicePositionQuery {
+            house: "1".to_string(),
+            room: "1".to_string(),
+            name: "socket".to_string(),
+        });
+        assert_eq!(dev.len(), 0);
+    }
+
+    #[test]
+    fn remove_deivice() {
+        let mut storage = DeviceStorageImpl::new();
+        storage.add_device(
+            "0",
+            "1",
+            "socket",
+            DeviceType::Socket(Socket {
+                name: "socket".to_string(),
+                description: "socket".to_string(),
+                is_on: false,
+                current_pover: 12_f32,
+                is_online: true,
+                is_accessable: true,
+            }),
+        );
+
+        let query = DevicePositionQuery {
+            house: "0".to_string(),
+            room: "1".to_string(),
+            name: "socket".to_string(),
+        };
+        // query device
+        let dev = storage.query_devices(&query);
+        assert_eq!(dev.len(), 1);
+
+        storage.remove_deivices(&query);
+
+        // device not exists
+        let dev = storage.query_devices(&query);
+        assert_eq!(dev.len(), 0);
     }
 }
