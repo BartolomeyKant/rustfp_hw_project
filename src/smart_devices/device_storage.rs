@@ -41,6 +41,7 @@ impl PartialEq<DevicePosition> for DevicePositionQuery {
     }
 }
 
+#[derive(Default)]
 pub struct DeviceStorageImpl {
     devices: HashMap<DevicePosition, DeviceType>,
 }
