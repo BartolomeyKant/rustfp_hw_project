@@ -18,6 +18,10 @@ impl SmartHouseImp {
     pub fn add_room<T: SmartRoom + 'static>(&mut self, name: &str, room: T) {
         self.rooms.insert(name.to_string(), Box::new(room));
     }
+
+    pub fn remove_room(&mut self, name: &str) {
+        self.rooms.remove(name);
+    }
 }
 
 impl Nameable for SmartHouseImp {
