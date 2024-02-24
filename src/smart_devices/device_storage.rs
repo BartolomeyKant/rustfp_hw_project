@@ -134,9 +134,8 @@ mod test {
         });
         assert_eq!(dev.len(), 1);
 
-        match dev.first().unwrap()
-        {
-            DeviceType::Socket(s)=> assert_eq!(s.name(), "socket"),
+        match dev.first().unwrap() {
+            DeviceType::Socket(s) => assert_eq!(s.name(), "socket"),
             _ => panic!("wrong device"),
         }
 
