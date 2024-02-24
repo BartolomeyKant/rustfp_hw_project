@@ -63,7 +63,7 @@ impl DeviceStorageImpl {
         );
     }
 
-    pub fn remove_deivices(&mut self, query: &DevicePositionQuery) {
+    pub fn remove_devices(&mut self, query: &DevicePositionQuery) {
         self.devices.retain(|k, _| query != k);
     }
 
@@ -175,7 +175,7 @@ mod test {
         let dev = storage.query_devices(&query);
         assert_eq!(dev.len(), 1);
 
-        storage.remove_deivices(&query);
+        storage.remove_devices(&query);
 
         // device not exists
         let dev = storage.query_devices(&query);
