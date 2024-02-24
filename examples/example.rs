@@ -77,4 +77,10 @@ fn main() {
     };
 
     println!("Device report\n{}", room_socket_report);
+
+    house.remove_room("1_room");
+    device_storage.borrow_mut().remove_devices(&DevicePositionQuery{house: house.name(), room: "1_room".to_string(), name: "*".to_string()});
+
+    let house_revision = house_revision_report(&house).expect("Something went wrong");
+    println!("House revision after remove: {house_revision}");
 }
