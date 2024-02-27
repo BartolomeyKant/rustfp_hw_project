@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use super::*;
 
 pub struct SmartHouseImp {
@@ -6,22 +8,30 @@ pub struct SmartHouseImp {
 }
 
 impl SmartHouseImp {
-    pub fn new(name: &str) -> SmartHouseImp {
-        SmartHouseImp {
+    pub fn new(name: &str) -> Self {
+        Self {
             name: name.to_string(),
             rooms: Default::default(),
         }
     }
+
     pub fn add_room<T: SmartRoom + 'static>(&mut self, name: &str, room: T) {
         self.rooms.insert(name.to_string(), Box::new(room));
+    }
+
+    pub fn remove_room(&mut self, name: &str) {
+        self.rooms.remove(name);
+    }
+}
+
+impl Nameable for SmartHouseImp {
+    fn name(&self) -> String {
+        self.name.clone()
     }
 }
 
 impl SmartHouse for SmartHouseImp {
-    fn name(&self) -> &str {
-        self.name.as_str()
-    }
-    fn rooms(&self) -> &HashMap<String, Box<dyn SmartRoom>> {
-        &self.rooms
+    fn rooms(&self) -> Vec<&dyn SmartRoom> {
+        self.rooms.iter().map(|r| r.1.as_ref()).collect()
     }
 }

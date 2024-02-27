@@ -1,35 +1,10 @@
+use crate::smart_house::{interface::SmartDevice, Nameable};
+
 use super::*;
 
 #[derive(Debug)]
-pub enum DeviceError {
-    AccessDenied,
-    DeviceOffline,
-}
-
-impl std::fmt::Display for DeviceError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-        use DeviceError::*;
-        write!(
-            f,
-            "{}",
-            match self {
-                AccessDenied => "access is denied",
-                DeviceOffline => "device is offline",
-            }
-        )
-    }
-}
-
-impl std::error::Error for DeviceError {}
-
-impl From<DeviceError> for String {
-    fn from(e: DeviceError) -> Self {
-        format!("{e}")
-    }
-}
-
-#[derive(Debug)]
 pub struct Socket {
+    pub name: String,
     pub description: String,
     pub is_on: bool,
     pub current_pover: f32,
@@ -82,6 +57,12 @@ impl Socket {
     }
 }
 
+impl Nameable for Socket {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
 impl SmartDevice for Socket {
     fn state_report(&self) -> String {
         format!(
@@ -106,6 +87,7 @@ impl SmartDevice for Socket {
 
 #[derive(Debug)]
 pub struct Thermometr {
+    pub name: String,
     pub description: String,
     pub value: f32,
     pub is_online: bool,
@@ -125,6 +107,12 @@ impl Thermometr {
             return Err(DeviceError::DeviceOffline);
         }
         Ok(())
+    }
+}
+
+impl Nameable for Thermometr {
+    fn name(&self) -> String {
+        self.name.clone()
     }
 }
 
@@ -150,6 +138,7 @@ mod tests {
     #[test]
     fn socket_fields() {
         let mut socket = Socket {
+            name: "socket 1".to_string(),
             description: "socket 1".to_string(),
             is_on: false,
             current_pover: 12f32,
@@ -170,6 +159,7 @@ mod tests {
     #[should_panic]
     fn socket_errors_get_power() {
         let socket = Socket {
+            name: "socket 1".to_string(),
             description: "socket 1".to_string(),
             is_on: false,
             current_pover: 12f32,
@@ -184,6 +174,7 @@ mod tests {
     #[should_panic]
     fn socket_errors_turn_on_off() {
         let mut socket = Socket {
+            name: "socket 1".to_string(),
             description: "socket 1".to_string(),
             is_on: false,
             current_pover: 12f32,
@@ -198,6 +189,7 @@ mod tests {
     #[test]
     fn thermometr_fields() {
         let thermometr = Thermometr {
+            name: "thermometr 1".to_string(),
             description: "thermometr 1".to_string(),
             value: 76f32,
             is_online: true,
@@ -211,6 +203,7 @@ mod tests {
     #[should_panic]
     fn thermometr_error() {
         let thermometr = Thermometr {
+            name: "thermometr 1".to_string(),
             description: "thermometr 1".to_string(),
             value: 76f32,
             is_online: false,
@@ -226,6 +219,7 @@ mod tests {
     #[test]
     fn socket_report() {
         let socket = Socket {
+            name: "socket 2".to_string(),
             description: "socket 2".to_string(),
             is_on: true,
             current_pover: 122f32,
@@ -242,6 +236,7 @@ mod tests {
     #[test]
     fn thermometr_report() {
         let thermometr = Thermometr {
+            name: "thermometr 1".to_string(),
             description: "thermometr 2".to_string(),
             value: -235f32,
             is_online: true,
