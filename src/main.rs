@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
-
-trait  SmartDevice {
+trait SmartDevice {
     fn description(&self) -> String;
 }
 
@@ -60,7 +59,6 @@ impl SmartDevice for Thermometer {
     }
 }
 
-
 struct Home {
     name: String,
     rooms: Vec<Room>,
@@ -90,8 +88,8 @@ struct Room {
 }
 
 impl Room {
-    fn new(name: & str) -> Room {
-        Room{
+    fn new(name: &str) -> Room {
+        Room {
             name: String::from(name),
             devices: Vec::new(),
         }
@@ -103,7 +101,6 @@ impl Room {
         self.devices.push(String::from(device));
     }
 }
-
 
 #[derive(Default)]
 struct DeviceStorage {
@@ -123,7 +120,7 @@ fn get_device_report(name: &str, dev_storage: &DeviceStorage) -> String {
     device.description()
 }
 
-fn room_report(room: & Room, dev_storage: &DeviceStorage) -> String {
+fn room_report(room: &Room, dev_storage: &DeviceStorage) -> String {
     let mut report = format!("Room: {}", room.name);
     for device in room.devices() {
         report.push_str(&format!("\n  {}", get_device_report(device, dev_storage)));
@@ -131,7 +128,7 @@ fn room_report(room: & Room, dev_storage: &DeviceStorage) -> String {
     report
 }
 
-fn home_report(home:& Home, dev_storage: &DeviceStorage) -> String {
+fn home_report(home: &Home, dev_storage: &DeviceStorage) -> String {
     let mut report = format!("Home: {}", home.name);
     for room in home.rooms() {
         report.push_str(&format!("\n{}", &room_report(room, dev_storage)));
@@ -139,25 +136,37 @@ fn home_report(home:& Home, dev_storage: &DeviceStorage) -> String {
     report
 }
 
-
 fn main() {
     let mut dev_storage = DeviceStorage::default();
 
     let mut s1 = Socket::new("socket 1");
-    s1.power= 10.0;
+    s1.power = 10.0;
     s1.toggle();
     dev_storage.sockets.insert(String::from("socket1"), s1);
-    dev_storage.sockets.insert(String::from("socket2"), Socket::new("socket 2"));
-    dev_storage.sockets.insert(String::from("socket3"), Socket::new("socket 3"));
-    dev_storage.sockets.insert(String::from("socket4"), Socket::new("socket 4"));
+    dev_storage
+        .sockets
+        .insert(String::from("socket2"), Socket::new("socket 2"));
+    dev_storage
+        .sockets
+        .insert(String::from("socket3"), Socket::new("socket 3"));
+    dev_storage
+        .sockets
+        .insert(String::from("socket4"), Socket::new("socket 4"));
 
     let mut t1 = Thermometer::new();
     t1.temperature = 20.0;
-    dev_storage.thermometers.insert(String::from("thermometer1"), t1);
-    dev_storage.thermometers.insert(String::from("thermometer2"), Thermometer::new());
-    dev_storage.thermometers.insert(String::from("thermometer3"), Thermometer::new());
-    dev_storage.thermometers.insert(String::from("thermometer4"), Thermometer::new());
-
+    dev_storage
+        .thermometers
+        .insert(String::from("thermometer1"), t1);
+    dev_storage
+        .thermometers
+        .insert(String::from("thermometer2"), Thermometer::new());
+    dev_storage
+        .thermometers
+        .insert(String::from("thermometer3"), Thermometer::new());
+    dev_storage
+        .thermometers
+        .insert(String::from("thermometer4"), Thermometer::new());
 
     let mut home = Home::new("My home");
     let room1 = home.add_room(Room::new("room1"));
@@ -172,5 +181,5 @@ fn main() {
     room2.add_device("thermometer3");
     room2.add_device("thermometer4");
 
-    println!("{}", home_report(&home,  &dev_storage))
+    println!("{}", home_report(&home, &dev_storage))
 }
